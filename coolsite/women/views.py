@@ -3,14 +3,18 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.template.loader import render_to_string
 
+menu = ["О сайте", "Добавить статью", "Обратная связь", "Войти"]
 # Create your views here.
 def index(request):  # ссылка на HttpRequest - инфа о запросе: сессии, куки
     # t = render_to_string('women/index.html')
     # return HttpResponse(t)
-    return render(request, 'women/index.html')
+    data = {'title': 'Главная страница',
+            'menu': menu,
+            }
+    return render(request, 'women/index.html', data)
 
 def about(request):
-    return render(request, 'women/about.html')
+    return render(request, 'women/about.html', {'title': 'О сайте'})
 
 def categories(request, cat_id):
     return HttpResponse(f"<h1>Статьи по категориям</h1><p>id: {cat_id}</p>")
