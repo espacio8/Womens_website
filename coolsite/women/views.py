@@ -1,12 +1,16 @@
-from django.http import HttpResponse, HttpResponseNotFound, Http404
+from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
-
+from django.template.loader import render_to_string
 
 # Create your views here.
 def index(request):  # ссылка на HttpRequest - инфа о запросе: сессии, куки
-    return HttpResponse("Страница приложения women.")
+    # t = render_to_string('women/index.html')
+    # return HttpResponse(t)
+    return render(request, 'women/index.html')
 
+def about(request):
+    return render(request, 'women/about.html')
 
 def categories(request, cat_id):
     return HttpResponse(f"<h1>Статьи по категориям</h1><p>id: {cat_id}</p>")
@@ -26,6 +30,8 @@ def archive(request, year):
         # return redirect('cats', 'dvf')
         url = reverse('cats', args=('dvf', ))
         return redirect(url)
+        # return HttpResponsePermanentRedirect(url)
+
     return HttpResponse(f"<h1>Архив по годам</h1><p>{year}</p>")
 
 
