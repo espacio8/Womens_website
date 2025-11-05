@@ -1,8 +1,10 @@
 from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect, HttpResponsePermanentRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
+
+from women.models import Women
 
 menu = [
     {'title': "О сайте", 'url_name': 'about'},
@@ -28,9 +30,10 @@ cats_db = [
 def index(request):  # ссылка на HttpRequest - инфа о запросе: сессии, куки
     # t = render_to_string('women/index.html')
     # return HttpResponse(t)
+    posts = Women.objects.filter(is_published=True)
     data = {'title': 'Главная страница',
             'menu': menu,
-            'posts': data_db,
+            'posts': posts,
             'cat_selected': 0,
             }
     return render(request, 'women/index.html', data)
@@ -44,8 +47,16 @@ def page_not_found(request, exception):
     return HttpResponseNotFound("<h1>Страница не найдена</h1>")
 
 
-def show_post(request, post_id):
-    return HttpResponse(f"Отображение id={post_id}")
+def show_post(request, post_slug):
+    post = get_object_or_404(Women, slug=post_slug)
+
+    data = {
+        'title': post.title,
+        'menu': menu,
+        'post': post,
+        'cat_selected': 1
+    }
+    return render(request, 'women/post.html', data)
 
 
 def add_page(request):
