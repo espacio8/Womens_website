@@ -30,7 +30,8 @@ cats_db = [
 def index(request):  # ссылка на HttpRequest - инфа о запросе: сессии, куки
     # t = render_to_string('women/index.html')
     # return HttpResponse(t)
-    posts = Women.objects.filter(is_published=True)
+    posts = Women.published.all()
+
     data = {'title': 'Главная страница',
             'menu': menu,
             'posts': posts,
