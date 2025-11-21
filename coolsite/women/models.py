@@ -1,5 +1,7 @@
 from django.db import models
+from django.template.defaultfilters import slugify
 from django.urls import reverse
+from pytils.translit import slugify
 
 
 class PublishedManager(models.Manager):
@@ -13,15 +15,15 @@ class Women(models.Model):
         DRAFT = 0, 'Черновик'
         PUBLISHED = 1, 'Опубликовано'
 
-    title = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255, unique=True, db_index=True)
-    content = models.TextField(blank=True)
-    time_create = models.DateTimeField(auto_now_add=True)
-    time_update = models.DateTimeField(auto_now=True)
-    is_published = models.BooleanField(choices=Status.choices, default=Status.DRAFT)
-    cat = models.ForeignKey('Category', on_delete=models.PROTECT, related_name="posts")
-    tag = models.ManyToManyField('TagPost', blank=True, related_name='tags')
-    husband = models.OneToOneField('Husband', on_delete=models.SET_NULL, null=True, blank=True, related_name='wuman')
+    title = models.CharField(max_length=255, verbose_name="Заголовок")
+    slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="Slug")
+    content = models.TextField(blank=True, verbose_name="Текст статьи")
+    time_create = models.DateTimeField(auto_now_add=True, verbose_name="Время создания")
+    time_update = models.DateTimeField(auto_now=True, verbose_name="Время изменения")
+    is_published = models.BooleanField(choices=tuple(map(lambda x: (bool(x[0]), x[1]), Status.choices)), default=Status.DRAFT, verbose_name="Статус")
+    cat = models.ForeignKey('Category', on_delete=models.PROTECT, related_name="posts", verbose_name="Категории")
+    tag = models.ManyToManyField('TagPost', blank=True, related_name='tags', verbose_name="Теги")
+    husband = models.OneToOneField('Husband', on_delete=models.SET_NULL, null=True, blank=True, related_name='wuman', verbose_name="Муж")
 
     objects = models.Manager()
     published = PublishedManager()
@@ -30,6 +32,8 @@ class Women(models.Model):
         return self.title
 
     class Meta:
+        verbose_name = "Известные женщины"
+        verbose_name_plural = "Известные женщины"  # множественное число в admin
         ordering = ['-time_create']
         indexes = [
             models.Index(fields=['-time_create'])
@@ -38,11 +42,17 @@ class Women(models.Model):
     def get_absolute_url(self):
         return reverse('post', kwargs={'post_slug': self.slug})
 
+    # def save(self, *args, **kwargs):
+    #     self.slug = slugify(self.title)
+    #     super().save(*args, **kwargs)
 
 class Category(models.Model):
-    name = models.CharField(max_length=100, db_index=True)
+    name = models.CharField(max_length=100, db_index=True,verbose_name="Категория")
     slug = models.SlugField(max_length=255, unique=True, db_index=True)
 
+    class Meta:
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
     def __str__(self):
         return self.name
 

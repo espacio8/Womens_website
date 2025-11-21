@@ -18,10 +18,25 @@ from django.contrib import admin
 from django.urls import path, include
 from women import views
 from women.views import page_not_found
+from debug_toolbar.toolbar import debug_toolbar_urls
+
+import mimetypes
+
+mimetypes.add_type("application/javascript", ".js", True)
+from django.conf import settings
+
+# if settings.DEBUG:
+#     import debug_toolbar
+# def show_toolbar(request):
+#     return True
+# SHOW_TOOLBAR_CALLBACK = show_toolbar
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('women.urls')),
-    ]
+] + debug_toolbar_urls()
 
 handler404 = page_not_found
+
+admin.site.site_header = "Панель администрирования"
+admin.site.index_title = "Известные женщины мира"
