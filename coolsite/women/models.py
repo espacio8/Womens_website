@@ -20,10 +20,12 @@ class Women(models.Model):
     content = models.TextField(blank=True, verbose_name="Текст статьи")
     time_create = models.DateTimeField(auto_now_add=True, verbose_name="Время создания")
     time_update = models.DateTimeField(auto_now=True, verbose_name="Время изменения")
-    is_published = models.BooleanField(choices=tuple(map(lambda x: (bool(x[0]), x[1]), Status.choices)), default=Status.DRAFT, verbose_name="Статус")
+    is_published = models.BooleanField(choices=tuple(map(lambda x: (bool(x[0]), x[1]), Status.choices)),
+                                       default=Status.DRAFT, verbose_name="Статус")
     cat = models.ForeignKey('Category', on_delete=models.PROTECT, related_name="posts", verbose_name="Категории")
     tag = models.ManyToManyField('TagPost', blank=True, related_name='tags', verbose_name="Теги")
-    husband = models.OneToOneField('Husband', on_delete=models.SET_NULL, null=True, blank=True, related_name='wuman', verbose_name="Муж")
+    husband = models.OneToOneField('Husband', on_delete=models.SET_NULL, null=True, blank=True, related_name='wuman',
+                                   verbose_name="Муж")
 
     objects = models.Manager()
     published = PublishedManager()
@@ -46,18 +48,21 @@ class Women(models.Model):
     #     self.slug = slugify(self.title)
     #     super().save(*args, **kwargs)
 
+
 class Category(models.Model):
-    name = models.CharField(max_length=100, db_index=True,verbose_name="Категория")
+    name = models.CharField(max_length=100, db_index=True, verbose_name="Категория")
     slug = models.SlugField(max_length=255, unique=True, db_index=True)
 
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
+
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
         return reverse('category', kwargs={'cat_slug': self.slug})
+
 
 class TagPost(models.Model):
     tag = models.CharField(max_length=100, db_index=True)
@@ -68,6 +73,7 @@ class TagPost(models.Model):
 
     def get_absolute_url(self):
         return reverse('tag', kwargs={'tag_slug': self.slug})
+
 
 class Husband(models.Model):
     name = models.CharField(max_length=100)
