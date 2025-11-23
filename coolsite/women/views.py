@@ -5,7 +5,7 @@ from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 
 from women.forms import AddPostForm, UploadFileForm
-from women.models import Women, Category, TagPost
+from women.models import Women, Category, TagPost, UploadFiles
 
 menu = [
     {'title': "О сайте", 'url_name': 'about'},
@@ -22,6 +22,7 @@ data_db = [
     {'id': 3, 'title': 'Джулия Робертс', 'content': 'Биография Ваниного писечкуна', 'is_published': True},
 ]
 
+
 def index(request):  # ссылка на HttpRequest - инфа о запросе: сессии, куки
     # t = render_to_string('women/index.html')
     # return HttpResponse(t)
@@ -34,18 +35,20 @@ def index(request):  # ссылка на HttpRequest - инфа о запрос�
             }
     return render(request, 'women/index.html', data)
 
-def handle_uploaded_file(f):
-    with open(f"uploads/{f.name}", "wb+") as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
+
+# def handle_uploaded_file(f):
+#     with open(f"uploads/{f.name}", "wb+") as destination:
+#         for chunk in f.chunks():
+#             destination.write(chunk)
+
 
 def about(request):
     if request.method == 'POST':
         # handle_uploaded_file(request.FILES['file_upload'])
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            handle_uploaded_file(form.cleaned_data['file'])
-
+            upload_files = UploadFiles(file=form.cleaned_data['file'])
+            upload_files.save()
     else:
         form = UploadFileForm()
     return render(request, 'women/about.html',
@@ -89,6 +92,7 @@ def add_page(request):
         'form': form}
     return render(request, 'women/add_page.html', data)
 
+
 def contact(request):
     return HttpResponse("Обратная связь")
 
@@ -106,6 +110,7 @@ def show_category(request, cat_slug):
             'cat_selected': category.pk,
             }
     return render(request, 'women/index.html', data)
+
 
 def show_tag_postlist(request, tag_slug):
     tag = get_object_or_404(TagPost, slug=tag_slug)
