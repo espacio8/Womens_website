@@ -2,7 +2,7 @@
 <!-- Хлебные крошки -->
 {% block breadcrumbs %}
   <!-- Теги -->
-    {% with post.tag.all as tags %}
+    {% with post.tags.all as tags %}
         {% if tags %}
             <ul class="tags-list">
                 <li>Теги:</li>
@@ -16,6 +16,7 @@
 
 {% block content %}
     <h1>{{ post.title }}</h1>
+
     {% if post.photo %}
         <p><img class="img-article-left" src="{{ post.photo.url }}"></p>
     {% endif %}

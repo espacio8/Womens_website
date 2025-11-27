@@ -30,7 +30,7 @@ class Women(models.Model):
     is_published = models.BooleanField(choices=tuple(map(lambda x: (bool(x[0]), x[1]), Status.choices)),
                                        default=Status.DRAFT, verbose_name="Статус")
     cat = models.ForeignKey('Category', on_delete=models.PROTECT, related_name="posts", verbose_name="Категории")
-    tag = models.ManyToManyField('TagPost', blank=True, related_name='tags', verbose_name="Теги")
+    tags = models.ManyToManyField('TagPost', blank=True, related_name='tags', verbose_name="Теги")
     husband = models.OneToOneField('Husband', on_delete=models.SET_NULL, null=True, blank=True, related_name='wuman',
                                    verbose_name="Муж")
 
