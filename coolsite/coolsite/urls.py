@@ -30,6 +30,7 @@ mimetypes.add_type("application/javascript", ".js", True)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('women.urls')),
+    path('users/', include('users.urls', namespace="users")),
 ] + debug_toolbar_urls()
 
 if settings.DEBUG:
