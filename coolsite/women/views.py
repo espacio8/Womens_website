@@ -1,5 +1,5 @@
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.shortcuts import render, redirect, get_object_or_404
@@ -81,10 +81,11 @@ class ShowPost(DataMixin, DetailView):
         return get_object_or_404(Women.published, slug=self.kwargs[self.slug_url_kwarg])
 
 
-class AddPage(LoginRequiredMixin,DataMixin,CreateView):
+class AddPage(PermissionRequiredMixin, LoginRequiredMixin,DataMixin,CreateView):
     form_class = AddPostForm  # ссылка на класс
     template_name = 'women/add_page.html'
     title_page = 'Добавление статьи'
+    permission_required = 'women.add_women'  # <прилож>.<действ>_<табл>
 
     def form_valid(self, form):
         w = form.save(commit=False)  # объект новой записи для БД без занесения в БД
@@ -92,14 +93,13 @@ class AddPage(LoginRequiredMixin,DataMixin,CreateView):
         return super().form_valid(form)
 
 
-
-class UpdatePage(DataMixin, UpdateView):
+class UpdatePage(PermissionRequiredMixin, DataMixin, UpdateView):
     model = Women
     fields = ['title', 'content', 'photo', 'is_published', 'cat']  # все обязательные поля должны быть
     template_name = 'women/add_page.html'
     success_url = reverse_lazy('home')  # маршрут выстраивается не сразу, а только когда необходим
     title_page = 'Редактирование статьи'
-
+    permission_required = 'women.change_women'
 
 class DeletePage(DataMixin, DeleteView):
     model = Women
@@ -108,7 +108,7 @@ class DeletePage(DataMixin, DeleteView):
     success_url = reverse_lazy('home')  # маршрут выстраивается не сразу, а только когда необходим
     title_page = 'Удаление записей'
 
-
+@permission_required(perm='women.add_women', raise_exception=True)
 def contact(request):
     return HttpResponse("Обратная связь")
 
