@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'women.apps.WomenConfig',
     'users',
     'debug_toolbar',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -150,8 +151,9 @@ LOGOUT_REDIRECT_URL = 'home'
 LOGIN_URL = 'users:login'  # если неавторизованный пользователь посещает закрытую страницу, переходит сюда
 
 AUTHENTICATION_BACKENDS = [
+    "social_core.backends.github.GithubOAuth2",
     "django.contrib.auth.backends.ModelBackend",
-    "users.authentication.EmailAuthBackend"
+    "users.authentication.EmailAuthBackend",
 ]
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -169,3 +171,6 @@ EMAIL_ADMIN = EMAIL_HOST_USER
 AUTH_USER_MODEL = 'users.User'
 
 DEFAULT_USER_IMAGE = MEDIA_URL + 'users/default.png'
+
+SOCIAL_AUTH_GITHUB_KEY = 'Ov23li3hBNenPAUKEJCK'
+SOCIAL_AUTH_GITHUB_SECRET = '7820edbf175a657b6fc4ac7cefbab931f9a69328'
